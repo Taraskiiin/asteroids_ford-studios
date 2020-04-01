@@ -1,0 +1,306 @@
+body {
+  background-color: #222222;
+  font-family: 'Press Start 2P', cursive;
+  color: #fbc235;
+  font-size: 3vh;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+  height: 100%;
+ }
+.container {
+  margin: 0 auto; }
+.nav {
+  animation-name: nav__slide;
+  animation-duration: 2s;
+  animation-iteration-count: unset;
+  margin-top: 5vh; }
+  .nav .links__list li a {
+    text-decoration: none;
+    letter-spacing: .5px;
+    line-height: 5vh;
+    color: inherit; }
+    .nav .links__list li a :active {
+      color: inherit; }
+
+@keyframes nav__slide {
+  0% {
+    margin-top: 100%; }
+  100% {
+    margin-top: 5vh; } }
+.spaceship {
+  transform: rotate(45deg);
+  border-top: 33vh solid #fff;
+  border-left: 7vh solid transparent;
+  border-right: 7vh solid transparent;
+  height: 0;
+  width: 3vh;
+  position: absolute;
+  z-index: 1;
+  animation-name: spaceship;
+  animation-duration: 4s;
+  animation-delay: 5s;
+  animation-iteration-count: 1;
+  bottom: -150%;
+  left: -150%; }
+  .spaceship::after {
+    content: " ";
+    bottom: 0;
+    position: absolute;
+    width: 0;
+    height: 0;
+    background-color: #c7c8ca;
+    transform: rotate(-12deg);
+    left: -3.4vh;
+    border-top: 33vh solid #c7c8ca;
+    border-right: 1.3vh solid #c7c8ca; }
+  .spaceship::before {
+    content: "";
+    width: 0;
+    height: 0;
+    position: absolute;
+    border-top: 20vh solid #c7c8ca;
+    border-left: 6vh solid transparent;
+    border-right: 2vh solid transparent;
+    bottom: 12.5vh;
+    right: calc(100% - 1.2vh);
+    transform: rotate(2deg); }
+  .spaceship .spaceship__nose {
+    height: 0;
+    width: 17vh;
+    position: absolute;
+    bottom: 32vh;
+    background-color: #cd3939;
+    left: calc(100% - 10vh);
+    border-top: 2vh solid #cd3939;
+    border-radius: 100px / 50px;
+    z-index: 2; }
+    .spaceship .spaceship__nose::after {
+      top: -16.6vh;
+      left: .5vh;
+      position: absolute;
+      content: "";
+      width: 0;
+      height: 0;
+      border-left: 8vh solid transparent;
+      border-right: 8vh solid transparent;
+      border-bottom: 15vh solid #cd3939;
+      z-index: 1; }
+    .spaceship .spaceship__nose::before {
+      content: "";
+      position: absolute;
+      width: 15vh;
+      height: 8.5vh;
+      border: 0.2vh solid #ff4745;
+      clip-path: circle(50% at center top);
+      background: #ff4745;
+      transform: rotate(62deg);
+      left: 1.3vh;
+      bottom: 1vh;
+      z-index: 2; }
+  .spaceship .spaceship__teeth {
+    position: relative;
+    width: 0;
+    height: 0; }
+    .spaceship .spaceship__teeth::after {
+      content: " ";
+      position: absolute;
+      z-index: 5;
+      width: 0;
+      height: 0;
+      border-top: 7vh solid transparent;
+      border-right: 8vh solid #ff4745;
+      border-bottom: 6vh solid transparent;
+      bottom: 6vh;
+      transform: rotate(-12deg);
+      left: -10.5vh; }
+    .spaceship .spaceship__teeth::before {
+      content: " ";
+      position: absolute;
+      z-index: 6;
+      height: 14vh;
+      width: 1.5vh;
+      border-radius: 50%;
+      background-color: #cd3939;
+      transform: rotate(-12deg);
+      bottom: 6.5vh;
+      left: -3.5vh; }
+  .spaceship .spaceship__ass {
+    width: 4vh;
+    height: 2vh;
+    border-radius: 50%;
+    background-color: #cd3939;
+    position: absolute;
+    bottom: -.5vh;
+    left: -.45vh;
+    z-index: 3; }
+    .spaceship .spaceship__ass::after {
+      content: "";
+      position: absolute;
+      width: 3.3vh;
+      height: 1vh;
+      background-color: #ff4745;
+      border-radius: 50%;
+      left: calc(100% - 3.6vh);
+      top: 0; }
+  .spaceship .spaceship__window {
+    width: 9vh;
+    height: 9vh;
+    background-color: #00d0d0;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 20.5vh;
+    left: -3.4vh;
+    border: 0.5vh solid #cd3939; }
+    .spaceship .spaceship__window::after {
+      content: " ";
+      width: 8.4vh;
+      height: .6vh;
+      background-color: #00f4f4;
+      border-radius: 10px;
+      transform: rotate(-25deg);
+      position: absolute;
+      left: 10%;
+      top: 50%; }
+    .spaceship .spaceship__window::before {
+      content: " ";
+      width: 5.8vh;
+      height: 1vh;
+      background-color: #00f4f4;
+      transform: rotate(-25deg);
+      position: absolute;
+      left: 17%;
+      top: 20%;
+      border-radius: 10px; }
+  .spaceship .spaceship__fire {
+    width: 0;
+    height: 0;
+    border-left: 1.5vh solid transparent;
+    border-right: 1.5vh solid transparent;
+    border-top: 15vh solid #fbc235;
+    animation-duration: .8s;
+    animation-name: spaceship__fire;
+    animation-iteration-count: infinite; }
+    .spaceship .spaceship__fire::after {
+      content: " ";
+      width: 0;
+      height: 0;
+      border-left: 1vh solid transparent;
+      border-right: 1vh solid transparent;
+      border-top: 10vh solid #f9a135;
+      position: absolute;
+      top: 0;
+      left: 0.5vh; }
+@keyframes spaceship__fire {
+  0% {
+    border-top: 15vh solid #fbc235; }
+  5% {
+    border-top: 13vh solid #f2b827; }
+  60% {
+    border-top: 20vh solid #fbc235; }
+  90% {
+    border-top: 22vh solid #f2b827; }
+  100% {
+    border-top: 15vh solid #fbc235; } }
+@keyframes spaceship {
+  0% {
+    left: 0;
+    bottom: 0;
+    opacity: 0;
+    display: block; }
+  20% {
+    opacity: 1; }
+  90% {
+    opacity: 1; }
+  100% {
+    bottom: 90%;
+    left: 80%;
+    opacity: 0;
+    display: none; } }
+.btn__wrapper{
+  position: relative;
+  margin: 0 auto;
+  width: 400px;
+  height: 400px;
+}
+#start__btn{
+  paint-order: normal;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  cursor: pointer;
+  z-index: 100;
+  opacity: 1;
+  display: block;
+}
+.plane{
+  width: 120px;
+  height: 120px;
+  transform-style: preserve-3d;
+}
+.plane.main{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  margin: auto;
+  transform: rotateX(68deg) rotateZ(-30deg);
+  animation: rotate 20s infinite linear;
+}
+.plane.main .circle {
+  width: 120px;
+  height: 120px;
+  position: absolute;
+  transform-style: preserve-3d;
+  border-radius: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 0 60px rgb(220, 20, 130),
+              inset 0 0 60px rgb(220, 20, 130);
+}
+.plane.main .circle::before,
+.plane.main .circle::after{
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  margin: auto;
+  width: 10%; height: 10%;
+  border-radius: 100%;
+  background: rgb(220, 20, 130);
+  box-sizing: border-box;
+  box-shadow: 0 0 60px 2px rgb(220, 20, 130);
+}
+.plane.main .circle::before {
+  transform: translateZ(-90px);
+}
+.plane.main .circle::after {
+  transform: translateZ(90px);
+}
+.plane.main .circle:nth-child(1){
+  transform: rotateZ(72deg) rotateX(63.435deg);
+}
+.plane.main .circle:nth-child(2){
+  transform: rotateZ(144deg) rotateX(63.435deg);
+}
+.plane.main .circle:nth-child(3){
+  transform: rotateZ(216deg) rotateX(63.435deg);
+}
+.plane.main .circle:nth-child(4){
+  transform: rotateZ(288deg) rotateX(63.435deg);
+}
+.plane.main .circle:nth-child(5){
+  transform: rotateZ(360deg) rotateX(63.435deg);
+}
+@keyframes rotate{
+  0%{
+    transform: rotateX(0) rotateY(0) rotateZ(0);
+  }
+  100%{
+    transform: rotateX(360deg) rotateY(360deg) rotateX(360deg);
+  }
+}
+/*# sourceMappingURL=style.css.map */

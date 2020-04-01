@@ -1,0 +1,35 @@
+{
+  "name": "hw14",
+  "version": "0.0.1",
+  "description": "1.0.0",
+  "main": "index.js",
+  "homepage": "http://taraskiiin.github.io/HW14-Webpack",
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack-dev-server",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Taraskiiin/hw14Webpack/issues"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "babel-loader": "^8.1.0",
+    "css-loader": "^3.4.2",
+    "file-loader": "^6.0.0",
+    "gh-pages": "^2.2.0",
+    "image-webpack-loader": "^6.0.0",
+    "style-loader": "^1.1.3",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
+  },
+  "dependencies": {
+    "html-webpack-plugin": "^4.0.3"
+  }
+}
