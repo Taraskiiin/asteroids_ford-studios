@@ -1,21 +1,18 @@
 {
-  "name": "hw14",
+  "name": "asteroids",
   "version": "0.0.1",
   "description": "1.0.0",
-  "main": "index.js",
-  "homepage": "http://taraskiiin.github.io/HW14-Webpack",
+  "main": "main.js",
+  "homepage": "http://taraskiiin.github.io/asteroids_ford-studios",
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -d dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Taraskiiin/hw14Webpack/issues"
-  },
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
@@ -30,6 +27,7 @@
     "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
+    "@babel/helper-replace-supers": "^7.13.0",
     "html-webpack-plugin": "^4.0.3"
   }
 }
