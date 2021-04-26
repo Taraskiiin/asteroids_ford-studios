@@ -6,7 +6,7 @@ const shipThrust = 5;
 const friction = 0.6;
 const rockJag = 0.2;
 const laserMax = 10;
-const laserSpeed = 500;
+const laserSpeed = 300;
 const rocksSpeed = 50;
 const rocksVert = 10;
 const rocksSize = 80;
@@ -36,12 +36,12 @@ const ship = {
 };
 
 const shootLaser = () => {
-  if(ship.canShoot && ship.laser.length < laserMax) {
+  if(ship.canShoot && ship.lasers.length < laserMax) {
     ship.lasers.push({
       x: ship.x + (4 / 3) * ship.r * Math.cos(ship.a),
       y: ship.y - (4 / 3) * ship.r * Math.sin(ship.a),
       xv: laserSpeed * Math.cos(ship.a) / FPS,
-      yv: laserSpeed * Math.sin(ship.a) / FPS
+      yv: -laserSpeed * Math.sin(ship.a) / FPS
     });
   }
   ship.canShoot = false;
@@ -202,6 +202,7 @@ const update = () => {
       ctx.arc(x, y, r, 0, Math.PI * 2, false);
       ctx.stroke();
     }
+    
     //----MOVE THE ROCKS
     rock.x += rock.xv;
     rock.y += rock.yv;
@@ -223,6 +224,23 @@ const update = () => {
     ctx.fillStyle = "red";
     ctx.fillRect(ship.x - 1, ship.y - 1, 2, 2);
   }
+  //----DRAW LASERS
+  for (let i = 0; i < ship.lasers.length; i++) {
+    ctx.fillStyle = "lime";
+    ctx.beginPath();
+    ctx.arc(ship.lasers[i].x, ship.lasers[i].y, shipSize / 15, 0, Math.PI * 2, false);
+    ctx.fill();
+  }
+  //----MOVE THE LASERS
+    for (let i = 0; i < ship.lasers.length; i++) {
+      ship.lasers[i].x += ship.lasers[i].xv;
+      ship.lasers[i].y += ship.lasers[i].yv;
+      // handle edge of screen
+      if (ship.lasers[i].x < 0 || ship.lasers[i].x > canv.width ||
+        ship.lasers[i].y < 0 || ship.lasers[i].y > canv.height) {
+          ship.lasers.slice(i, 1);
+      }
+    }
   //----THRUST THE SHIP
   if (ship.thrusting) {
     ship.thrust.x += (shipThrust * Math.cos(ship.a)) / FPS;
