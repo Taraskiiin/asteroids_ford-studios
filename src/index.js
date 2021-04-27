@@ -2,7 +2,7 @@ import css from "./style.css";
 
 const FPS = 30; // frames per second
 const shipSize = 30; // Ship height in px;
-const shipThrust = 5;
+const shipThrust = 8;
 const friction = 0.6;
 const rockJag = 0.2;
 const laserMax = 10;
@@ -11,6 +11,7 @@ const rocksSpeed = 50;
 const rocksVert = 10;
 const rocksSize = 80;
 const turnSpeed = 360;
+const laserExplodeDur = 0.1;
 const shipExplodeDur = 0.3;
 const canv = document.getElementById("gameCanvas");
 const ctx = canv.getContext("2d");
@@ -32,20 +33,21 @@ const ship = {
     y: 0,
   },
   canShoot: true,
-  lasers:[]
+  lasers: [],
 };
 
 const shootLaser = () => {
-  if(ship.canShoot && ship.lasers.length < laserMax) {
+  if (ship.canShoot && ship.lasers.length < laserMax) {
     ship.lasers.push({
       x: ship.x + (4 / 3) * ship.r * Math.cos(ship.a),
       y: ship.y - (4 / 3) * ship.r * Math.sin(ship.a),
-      xv: laserSpeed * Math.cos(ship.a) / FPS,
-      yv: -laserSpeed * Math.sin(ship.a) / FPS
+      xv: (laserSpeed * Math.cos(ship.a)) / FPS,
+      yv: (-laserSpeed * Math.sin(ship.a)) / FPS,
+      explodeTime: 0,
     });
   }
   ship.canShoot = false;
-}
+};
 
 const createAsteroidBelt = () => {
   let x, y;
@@ -53,25 +55,42 @@ const createAsteroidBelt = () => {
     do {
       x = Math.floor(Math.random() * canv.width);
       y = Math.floor(Math.random() * canv.height);
-    } while (distBetweenShip(ship.x, ship.y, x, y) < rocksSize * 2 + ship.r);
-    rocks.push(newAsteroid(x, y));
+    } while (distBetweenPoint(ship.x, ship.y, x, y) < rocksSize * 2 + ship.r);
+    rocks.push(newAsteroid(x, y, Math.ceil(rocksSize / 2)));
   }
 };
 
-const distBetweenShip = (x1, y1, x2, y2) => {
+const destroyRock = (index) => {
+  let x = rocks[index].x;
+  let y = rocks[index].y;
+  let r = rocks[index].r;
+
+  if (r == Math.ceil(rocksSize / 2)) {
+    rocks.push(newAsteroid(x, y, Math.ceil(rocksSize / 3)));
+    rocks.push(newAsteroid(x, y, Math.ceil(rocksSize / 3)));
+    rocks.push(newAsteroid(x, y, Math.ceil(rocksSize / 3)));
+  } else if (r == Math.ceil(rocksSize / 3)) {
+    rocks.push(newAsteroid(x, y, Math.ceil(rocksSize / 9)));
+    rocks.push(newAsteroid(x, y, Math.ceil(rocksSize / 9)));
+  }
+  // destroy the rock
+  rocks.splice(index, 1);
+};
+
+const distBetweenPoint = (x1, y1, x2, y2) => {
   return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 };
 
 const explodeShip = () => {
   ship.explodeTime = Math.ceil(shipExplodeDur * FPS);
 };
-const newAsteroid = (x, y) => {
+const newAsteroid = (x, y, r) => {
   let rock = {
     x: x,
     y: y,
     xv: ((Math.random() * rocksSpeed) / FPS) * (Math.random() < 0.5 ? 1 : -1),
     yv: ((Math.random() * rocksSpeed) / FPS) * (Math.random() < 0.5 ? 1 : -1),
-    r: rocksSize / 2,
+    r: r,
     a: Math.random() * Math.PI * 2,
     vert: Math.floor(Math.random() * (rocksVert + 1) + rocksVert / 2),
     offs: [],
@@ -202,7 +221,7 @@ const update = () => {
       ctx.arc(x, y, r, 0, Math.PI * 2, false);
       ctx.stroke();
     }
-    
+
     //----MOVE THE ROCKS
     rock.x += rock.xv;
     rock.y += rock.yv;
@@ -218,7 +237,6 @@ const update = () => {
       rock.y = 0;
     }
   });
-
   //----CENTER DOT
   if (showCenterDot) {
     ctx.fillStyle = "red";
@@ -226,21 +244,81 @@ const update = () => {
   }
   //----DRAW LASERS
   for (let i = 0; i < ship.lasers.length; i++) {
-    ctx.fillStyle = "lime";
-    ctx.beginPath();
-    ctx.arc(ship.lasers[i].x, ship.lasers[i].y, shipSize / 15, 0, Math.PI * 2, false);
-    ctx.fill();
+    if (ship.lasers[i].explodeTime == 0) {
+      ctx.fillStyle = "#1cc5dc";
+      ctx.beginPath();
+      ctx.arc(
+        ship.lasers[i].x,
+        ship.lasers[i].y,
+        shipSize / 15,
+        0,
+        Math.PI * 2,
+        false
+      );
+      ctx.fill();
+    } else {
+      // draw the explosion
+      ctx.fillStyle = "#02475e";
+      ctx.beginPath();
+      ctx.arc(
+        ship.lasers[i].x,
+        ship.lasers[i].y,
+        ship.r * 0.75,
+        0,
+        Math.PI * 2,
+        false
+      );
+      ctx.fill();
+      ctx.fillStyle = "#00adb5";
+      ctx.beginPath();
+      ctx.arc(
+        ship.lasers[i].x,
+        ship.lasers[i].y,
+        ship.r * 0.5,
+        0,
+        Math.PI * 2,
+        false
+      );
+      ctx.fill();
+      ctx.fillStyle = "#aad8d3";
+      ctx.beginPath();
+      ctx.arc(
+        ship.lasers[i].x,
+        ship.lasers[i].y,
+        ship.r * 0.25,
+        0,
+        Math.PI * 2,
+        false
+      );
+      ctx.fill();
+    }
   }
   //----MOVE THE LASERS
-    for (let i = 0; i < ship.lasers.length; i++) {
+  for (let i = 0; i < ship.lasers.length; i++) {
+    // handle edge of screen
+    if (
+      ship.lasers[i].x < 0 ||
+      ship.lasers[i].x > canv.width ||
+      ship.lasers[i].y < 0 ||
+      ship.lasers[i].y > canv.height
+    ) {
+      ship.lasers.splice(i, 1);
+      continue;
+    }
+    // handl the expos
+    if (ship.lasers[i].explodeTime > 0) {
+      ship.lasers[i].explodeTime-- ;
+      if (ship.lasers[i].explodeTime == 0) { 
+        ship.lasers.splice(i, 1);
+        continue;
+      } 
+    
+    } else {
       ship.lasers[i].x += ship.lasers[i].xv;
       ship.lasers[i].y += ship.lasers[i].yv;
-      // handle edge of screen
-      if (ship.lasers[i].x < 0 || ship.lasers[i].x > canv.width ||
-        ship.lasers[i].y < 0 || ship.lasers[i].y > canv.height) {
-          ship.lasers.slice(i, 1);
-      }
     }
+  }
+
   //----THRUST THE SHIP
   if (ship.thrusting) {
     ship.thrust.x += (shipThrust * Math.cos(ship.a)) / FPS;
@@ -253,10 +331,12 @@ const update = () => {
   if (!exploding) {
     for (let i = 0; i < rocks.length; i++) {
       if (
-        distBetweenShip(ship.x, ship.y, rocks[i].x, rocks[i].y) <
+        distBetweenPoint(ship.x, ship.y, rocks[i].x, rocks[i].y) <
         ship.r + rocks[i].r
       ) {
         explodeShip();
+        destroyRock(i);
+        break;
       }
     }
     ship.x += ship.thrust.x;
@@ -264,8 +344,31 @@ const update = () => {
 
     ship.a += ship.rotation;
   }
-  //----MOVE THE SHIP
+  //----DETECT HITS ON ROCK
+  var rx, ry, rr, lx, ly;
+  for (let i = rocks.length - 1; i >= 0; i--) {
+    // asteroids prop
+    rx = rocks[i].x;
+    ry = rocks[i].y;
+    rr = rocks[i].r;
+    for (let j = ship.lasers.length - 1; j >= 0; j--) {
+      // lasers prop
+      lx = ship.lasers[j].x;
+      ly = ship.lasers[j].y;
 
+      if (
+        ship.lasers[j].explodeTime == 0 &&
+        distBetweenPoint(rx, ry, lx, ly) < rr
+      ) {
+        // remove the asteroid and laser-shot
+        destroyRock(i);
+        ship.lasers[j].explodeTime = Math.ceil(laserExplodeDur * FPS);
+
+        break;
+      }
+    }
+  }
+  //----MOVE THE SHIP
   if (ship.x < 0 - ship.r) {
     ship.x = canv.width;
   } else if (ship.x > canv.width + ship.r) {
