@@ -15,25 +15,36 @@ const laserExplodeDur = 0.1;
 const shipExplodeDur = 0.3;
 const canv = document.getElementById("gameCanvas");
 const ctx = canv.getContext("2d");
-const rocksAmount = 10;
+const rocksAmount = 1;
 let rocks = [];
 const showBounding = false;
 const showCenterDot = false;
+const textFadeTime = 2.5;
+const textSize = 26;
+const textGameOver = "GAME OVER COWBOY";
 
-const ship = {
-  x: canv.width / 2,
-  y: canv.height / 2,
-  r: shipSize / 2,
-  a: (90 / 180) * Math.PI, // convert to radians
-  rotation: 0,
-  thrusting: false,
-  explodeTime: 0,
-  thrust: {
-    x: 0,
-    y: 0,
-  },
-  canShoot: true,
-  lasers: [],
+
+let   level, roids, ship, text, textAlpha;
+// SET UP game parameters
+
+
+const createShip = () => {
+  return {
+    x: canv.width / 2,
+    y: canv.height / 2,
+    r: shipSize / 2,
+    a: (90 / 180) * Math.PI, // convert to radians
+    rotation: 0,
+    thrusting: false,
+    explodeTime: 0,
+    thrust: {
+      x: 0,
+      y: 0,
+    },
+    canShoot: true,
+    lasers: [],
+    dead: false
+  };
 };
 
 const shootLaser = () => {
@@ -51,7 +62,7 @@ const shootLaser = () => {
 
 const createAsteroidBelt = () => {
   let x, y;
-  for (let i = 0; i < rocksAmount; i++) {
+  for (let i = 0; i < rocksAmount + level; i++) {
     do {
       x = Math.floor(Math.random() * canv.width);
       y = Math.floor(Math.random() * canv.height);
@@ -75,6 +86,10 @@ const destroyRock = (index) => {
   }
   // destroy the rock
   rocks.splice(index, 1);
+  if (rocks.length == 0) {
+    level ++;
+    newLevel();
+  }
 };
 
 const distBetweenPoint = (x1, y1, x2, y2) => {
@@ -82,6 +97,8 @@ const distBetweenPoint = (x1, y1, x2, y2) => {
 };
 
 const explodeShip = () => {
+  ship.canShoot = false;
+  ship.dead = true;
   ship.explodeTime = Math.ceil(shipExplodeDur * FPS);
 };
 const newAsteroid = (x, y, r) => {
@@ -117,7 +134,13 @@ const keyDown = (e) => {
       break;
   }
 };
+
 const keyUp = (e) => {
+
+  if (ship.dead) {
+    return
+  }
+
   switch (e.keyCode) {
     case 32: // space bar (shooting again)
       ship.canShoot = true;
@@ -307,12 +330,11 @@ const update = () => {
     }
     // handl the expos
     if (ship.lasers[i].explodeTime > 0) {
-      ship.lasers[i].explodeTime-- ;
-      if (ship.lasers[i].explodeTime == 0) { 
+      ship.lasers[i].explodeTime--;
+      if (ship.lasers[i].explodeTime == 0) {
         ship.lasers.splice(i, 1);
         continue;
-      } 
-    
+      }
     } else {
       ship.lasers[i].x += ship.lasers[i].xv;
       ship.lasers[i].y += ship.lasers[i].yv;
@@ -320,7 +342,7 @@ const update = () => {
   }
 
   //----THRUST THE SHIP
-  if (ship.thrusting) {
+  if (ship.thrusting && !ship.dead) {
     ship.thrust.x += (shipThrust * Math.cos(ship.a)) / FPS;
     ship.thrust.y -= (shipThrust * Math.sin(ship.a)) / FPS;
   } else {
@@ -379,7 +401,33 @@ const update = () => {
   } else if (ship.y > canv.height + ship.r) {
     ship.y = 0;
   }
+  //----DRAW THE LVL TEXT
+  if (textAlpha >= 0) {
+    ctx.fillStyle = "rgba(28,197,220, " + textAlpha + ")";
+    ctx.font = textSize + "px 'Zen Dots'";
+    ctx.fillText(text, canv.width * 0.05, canv.height * 0.15);
+    textAlpha -= (1.0 / textFadeTime / FPS);
+  }
+  //----DRAW THE GAME OVER TEXT
+  if (ship.dead) {
+    ctx.fillStyle = "rgba(28,197,220, 1)";
+    ctx.font = textSize + "px 'Zen Dots'";
+    ctx.fillText(textGameOver, canv.width * 0.65, canv.height * 0.15);
+    textAlpha -= (1.0 / textFadeTime / FPS);
+  }
+};
+setInterval(update, 1000 / FPS);
+
+const newLevel = () => {
+  text = "LEVEL " + (level + 1);
+  textAlpha = 1.0;
+  createAsteroidBelt();
+}
+
+const newGame = () => {
+  level = 0;
+  ship = createShip();
+  newLevel();
 };
 
-createAsteroidBelt();
-setInterval(update, 1000 / FPS);
+newGame();
