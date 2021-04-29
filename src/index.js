@@ -72,7 +72,7 @@ const shootLaser = () => {
 
 const createAsteroidBelt = () => {
   let x, y;
-  for (let i = 0; i < rocksAmount + level; i++) {
+  for (let i = 0; i < rocksAmount + 5; i++) {
     do {
       x = Math.floor(Math.random() * canv.width);
       y = Math.floor(Math.random() * canv.height);
@@ -446,12 +446,11 @@ const update = () => {
     ctx.fillText(textGameOver, canv.width * 0.65, canv.height * 0.15);
     textAlpha -= (1.0 / textFadeTime / FPS);
   }
-
 };
 setInterval(update, 1000 / FPS);
 
 const newLevel = () => {
-  text = "LEVEL " + (level + 5);
+  text = "LEVEL " + (level);
   textAlpha = 1.0;
   createAsteroidBelt();
 }
