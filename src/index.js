@@ -15,18 +15,26 @@ const laserExplodeDur = 0.1;
 const shipExplodeDur = 0.3;
 const canv = document.getElementById("gameCanvas");
 const ctx = canv.getContext("2d");
-const rocksAmount = 1;
-let rocks = [];
+const rocksAmount = 10;
 const showBounding = false;
 const showCenterDot = false;
 const textFadeTime = 2.5;
 const textSize = 26;
 const textGameOver = "GAME OVER COWBOY";
+const pointLarge = 10; // Point scored large asteroid
+const pointMedium = 20; // Point scored middle asteroid
+const pointSmall = 30; // Point scored small asteroid
+const textScore = "SCORE: ";
+let rocks = [];
 
+let level, roids, score, ship, text, textAlpha;
 
-let   level, roids, ship, text, textAlpha;
-// SET UP game parameters
-
+const playSound = (soundUrl) => {
+  const audio = new Audio();
+  audio.src = soundUrl;
+  audio.autoplay = true;
+}
+const laserSound = new Audio('Sound/horn.wav')
 
 const createShip = () => {
   return {
@@ -56,6 +64,8 @@ const shootLaser = () => {
       yv: (-laserSpeed * Math.sin(ship.a)) / FPS,
       explodeTime: 0,
     });
+    playSound('Sound/horn.wav');
+    laserSound.play();
   }
   ship.canShoot = false;
 };
@@ -80,10 +90,15 @@ const destroyRock = (index) => {
     rocks.push(newAsteroid(x, y, Math.ceil(rocksSize / 3)));
     rocks.push(newAsteroid(x, y, Math.ceil(rocksSize / 3)));
     rocks.push(newAsteroid(x, y, Math.ceil(rocksSize / 3)));
+    score += pointLarge;
   } else if (r == Math.ceil(rocksSize / 3)) {
     rocks.push(newAsteroid(x, y, Math.ceil(rocksSize / 9)));
     rocks.push(newAsteroid(x, y, Math.ceil(rocksSize / 9)));
+    score += pointMedium;
   }
+    else {
+      score += pointSmall;
+    }
   // destroy the rock
   rocks.splice(index, 1);
   if (rocks.length == 0) {
@@ -132,6 +147,8 @@ const keyDown = (e) => {
     case 39: // right arrow
       ship.rotation = ((-turnSpeed / 180) * Math.PI) / FPS;
       break;
+    case 72:
+      playSound('./Sound/horn.wav');
   }
 };
 
@@ -164,6 +181,13 @@ const update = () => {
   //----DRAW SPACE
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canv.width, canv.height);
+  //----DRAW THE SCORE
+  if (ship.dead) {
+    ctx.fillStyle = "rgba(28,197,220, 1)";
+    ctx.font = textSize + "px 'Zen Dots'";
+    ctx.fillText(textScore + score, canv.width * 0.65, canv.height * 0.20);
+    textAlpha -= (1.0 / textFadeTime / FPS);
+  }
   //----DRAW SHIP
   if (!exploding) {
     ctx.strokeStyle = "white";
@@ -408,6 +432,13 @@ const update = () => {
     ctx.fillText(text, canv.width * 0.05, canv.height * 0.15);
     textAlpha -= (1.0 / textFadeTime / FPS);
   }
+  //----DRAW THE LVL TEXT
+  if (!ship.dead) {
+    ctx.fillStyle = "rgba(28,197,220, 1)";
+    ctx.font = textSize + "px 'Zen Dots'";
+    ctx.fillText(textScore + score, canv.width * 0.05, canv.height * 0.85);
+    textAlpha -= (1.0 / textFadeTime / FPS);
+  }
   //----DRAW THE GAME OVER TEXT
   if (ship.dead) {
     ctx.fillStyle = "rgba(28,197,220, 1)";
@@ -415,17 +446,19 @@ const update = () => {
     ctx.fillText(textGameOver, canv.width * 0.65, canv.height * 0.15);
     textAlpha -= (1.0 / textFadeTime / FPS);
   }
+
 };
 setInterval(update, 1000 / FPS);
 
 const newLevel = () => {
-  text = "LEVEL " + (level + 1);
+  text = "LEVEL " + (level + 5);
   textAlpha = 1.0;
   createAsteroidBelt();
 }
 
 const newGame = () => {
   level = 0;
+  score = 0;
   ship = createShip();
   newLevel();
 };
